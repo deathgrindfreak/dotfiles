@@ -101,8 +101,6 @@ export PANEL_FONT_FAMILY="-*-terminus-medium-r-normal-*-12-*-*-*-c-*-*-1"
 export AWS_PROFILE=vixprod
 export AWS_REGION=us-east-1
 
-export VIX_API_URL=https://mrip32r4d8.execute-api.us-east-1.amazonaws.com/latest
-
 # AWS credential switcher
 creds(){
     case "$1" in
