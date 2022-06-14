@@ -1,0 +1,28 @@
+[user]
+	email = john.cooper.bell@gmail.com
+	name = Cooper Bell
+[github]
+	user = deathgrindfreak
+	oauth-token = 845dd9fa54b24f3b1286533eeb32971e798436a0
+[diff]
+	tool = delta
+[merge]
+	tool = delta
+[push]
+	followTags = true
+[pager]
+    diff = delta
+    show = delta
+    log = delta
+    reflog = delta
+[interactive]
+	diffFilter = delta
+[pull]
+	rebase = true
+[rebase]
+	autosquash = true
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
