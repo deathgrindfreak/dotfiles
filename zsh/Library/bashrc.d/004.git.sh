@@ -41,5 +41,4 @@ list_outdated_vix_dev_deps() (
 update_vix_deps() (
     for dep in $(list_outdated_vix_deps); do { yarn add "$dep" } done
     for dep in $(list_outdated_vix_dev_deps); do { yarn add --dev "$dep" } done
-
 )
