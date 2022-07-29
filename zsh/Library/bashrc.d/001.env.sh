@@ -50,5 +50,6 @@ export BLACKDUCK_API='Y2JiYzFiZTQtMmRlMS00MGY3LTg3NjItZDBiYjNlOTdjNzA2OjNkNTgwZW
 export GTAGSLABEL=pygments
 
 complete -W 'singularity logging entity' open_db_windows
+complete -W 'singularity logging entity ops' vix_psql
 
 export NODE_EXTRA_CA_CERTS="$HOME/.vix/veracity-root-ca.crt"
