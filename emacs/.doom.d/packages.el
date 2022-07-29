@@ -52,3 +52,4 @@
 ;; (package! typescript-mode)
 ;; (package! tide)
 (package! key-chord)
+(package! sqlformat)

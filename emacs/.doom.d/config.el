@@ -89,6 +89,9 @@
 
 ;; PG
 
+(setq sqlformat-command 'pgformatter)
+(setq sqlformat-args '("-s2" "-g"))
+
 (defun set-pgpass (region)
   "Sets the pgpass file up in good order for regional connections
 
