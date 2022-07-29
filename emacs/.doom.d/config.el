@@ -52,13 +52,13 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
+
+;; Set "jj" as the exit chord
 (require 'key-chord)
 (key-chord-mode t)
 (key-chord-define evil-insert-state-map  "jj" 'evil-normal-state)
 
-(defun on-after-init ()
-  (unless (display-graphic-p (selected-frame))
-    (set-face-background 'default "unspecified-bg" (selected-frame))))
+;; Github
 
 (defun open-pr ()
   "Open a new pull request in github for the current project"
@@ -86,6 +86,36 @@
                            "#L"
                            (number-to-string
                             (line-number-at-pos))))))
+
+;; PG
+
+(defun set-pgpass (region)
+  "Sets the pgpass file up in good order for regional connections
+
+This function depends on the script `set_pgpass` which
+1) Downloads the .pgpass from the arx instance in the VIX_REGION region
+2) Updates the format so that it's appropriate for local development
+
+This has to happen since we don't have a unique host:port:database per-region for localhost
+vs AWS which has specific domains for each regional db"
+  (let ((old-region (getenv "VIX_REGION")))
+    (setenv "VIX_REGION" region)
+    (shell-command "set_pgpass")
+    (setenv "VIX_REGION" old-region)))
+
+(defun vix-psql (region)
+  (interactive "sVix Region: ")
+  "Connects to a Veracity db instance"
+
+  ;; Ensure that we're tunneled into the right arx instance
+  (let* ((ssh-sockfile (concat "$HOME/.vix/sockets/" region "-arx"))
+         (socat-cmd (concat "echo | socat - UNIX-CONNECT:" ssh-sockfile "")))
+    (when (not (string= "" (shell-command-to-string socat-cmd)))
+      (error (concat "No arx tunnel detected!  Try: arx " region))))
+
+  (message "Setting ~/.pgpass ...")
+  (set-pgpass region)
+  (sql-postgres))
 
 (global-evil-surround-mode 1)
 
