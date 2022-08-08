@@ -4,15 +4,18 @@
 typeset +H _current_dir="%{$fg_bold[blue]%}%3~%{$reset_color%} "
 typeset +H _return_status="%{$fg_bold[red]%}%(?..⍉)%{$reset_color%}"
 typeset +H _hist_no="%{$fg[grey]%}%h%{$reset_color%}"
-typeset +H _aws_region="%{$fg[yellow]%}[$(echo "$AWS_REGION")]%{$reset_color%}"
 
 PROMPT='
-$(_user_host)${_current_dir} ${_aws_region} $(git_prompt_info) $(ruby_prompt_info)
+$(_user_host)${_current_dir} $(aws_region) $(git_prompt_info) $(ruby_prompt_info)
 %{%(!.${fg[red]}.${fg[white]})%}▶%{$reset_color%} '
 
 PROMPT2='%{%(!.${fg[red]}.${fg[white]})%}◀%{$reset_color%} '
 
 RPROMPT='$(vi_mode_prompt_info)%{$(echotc UP 1)%}$(_git_time_since_commit) $(git_prompt_status) ${_return_status}%{$(echotc DO 1)%}'
+
+function aws_region() {
+  echo "%{$fg[yellow]%}[$AWS_REGION]%{$reset_color%}"
+}
 
 function _user_host() {
   local me
