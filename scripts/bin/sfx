@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+exec mpv --really-quiet --no-video "$HOME/bin/$1.ogg" &
