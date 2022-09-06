@@ -13,6 +13,9 @@ export PATH="$PATH:/Users/jcbell/.emacs.d/bin"
 
 export PATH="$PATH:/Applications/Emacs.app/"
 
+# J language
+export PATH="$PATH:/Applications/j903/bin/"
+
 # z command
 . $HOME/bin/z/z.sh
 
