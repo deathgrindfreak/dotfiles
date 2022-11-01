@@ -69,3 +69,5 @@ done
 source /Users/jcbell/Library/Preferences/org.dystroy.broot/launcher/bash/br
 
 source '/Users/jcbell/Library/Application Support/org.dystroy.broot/launcher/bash/br'
+
+[ -f "/Users/jcbell/.ghcup/env" ] && source "/Users/jcbell/.ghcup/env" # ghcup-env
