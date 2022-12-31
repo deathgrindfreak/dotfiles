@@ -1,3 +1,14 @@
+(defun my/apply-theme (appearance)
+  "Load theme, taking current system APPEARANCE into consideration."
+  (mapc #'disable-theme custom-enabled-themes)
+  (pcase appearance
+    ('light (load-theme 'doom-gruvbox-light t))
+    ('dark (load-theme 'doom-gruvbox t))))
+
+(add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
+
+(setq lsp-enable-file-watchers nil)
+
 ;; Projectile won't show all files if this is set to t
 (setq projectile-enable-caching nil)
 
@@ -129,6 +140,8 @@
 (map! :leader
       :mode 'haskell-interactive-mode
       "m l" #'haskell-process-load-file)
+
+(custom-set-variables '(haskell-stylish-on-save t))
 
 ;; Rust
 (setq lsp-rust-server 'rust-analyzer)

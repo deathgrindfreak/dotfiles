@@ -53,3 +53,5 @@
 ;; (package! tide)
 (package! key-chord)
 (package! sqlformat)
+(package! lsp-haskell)
+(package! dhall-mode)
