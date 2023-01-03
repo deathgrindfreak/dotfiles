@@ -5,6 +5,8 @@
     ('light (load-theme 'doom-gruvbox-light t))
     ('dark (load-theme 'doom-gruvbox t))))
 
+(setq doom-font (font-spec :family "Hack" :size 12))
+
 (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
 
 (setq lsp-enable-file-watchers nil)
