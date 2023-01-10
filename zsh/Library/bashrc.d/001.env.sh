@@ -41,7 +41,7 @@ export PATH="$PATH:$HOME/dotfiles/lisp/bin"
 export MANPATH="$MANPATH:$HOME/dotfiles/lisp/man"
 
 # AWS variables
-export AWS_PROFILE=vixprod
+export AWS_PROFILE=personal
 export AWS_REGION=us-east-1
 export VIX_REGION=ue1
 export VIX_ENV=dev
@@ -51,8 +51,3 @@ export PROMPT_COMMAND='if [ "$(id -u)" -ne 0 ]; then echo "$(date "+%Y-%m-%d.%H:
 export BLACKDUCK_API='Y2JiYzFiZTQtMmRlMS00MGY3LTg3NjItZDBiYjNlOTdjNzA2OjNkNTgwZWJkLTgzMmQtNDU1YS05NTRhLTJkOGU3MWQzMDg0Ng=='
 
 export GTAGSLABEL=pygments
-
-complete -W 'singularity logging entity' open_db_windows
-complete -W 'singularity logging entity ops' vix_psql
-
-export NODE_EXTRA_CA_CERTS="$HOME/.vix/veracity-root-ca.crt"

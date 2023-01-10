@@ -5,7 +5,7 @@ ZSH=$HOME/.oh-my-zsh
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-ZSH_THEME="avit-jcb"
+ZSH_THEME="avit"
 
 # Set to this to use case-sensitive completion
 # CASE_SENSITIVE="true"
@@ -66,8 +66,6 @@ for FN in $HOME/Library/bashrc.d/*.sh; do
     source "$FN"
 done
 
-source /Users/jcbell/Library/Preferences/org.dystroy.broot/launcher/bash/br
+#[ -f "/Users/jcbell/.ghcup/env" ] && source "/Users/jcbell/.ghcup/env" # ghcup-env
 
-source '/Users/jcbell/Library/Application Support/org.dystroy.broot/launcher/bash/br'
-
-[ -f "/Users/jcbell/.ghcup/env" ] && source "/Users/jcbell/.ghcup/env" # ghcup-env
+[ -f "/Users/b377114/.ghcup/env" ] && source "/Users/b377114/.ghcup/env" # ghcup-env

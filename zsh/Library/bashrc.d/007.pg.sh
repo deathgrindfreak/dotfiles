@@ -1,5 +1,3 @@
-source ~/.vix/arx_env.sh || { echo "Missing ~/.vix/arx_env.sh"; exit 1; }
-
 ssh_hostname() (
     SSH_HOSTNAME=''
 

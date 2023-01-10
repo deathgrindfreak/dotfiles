@@ -28,6 +28,6 @@ alias ls="exa"
 alias cdpo="cd ~/src/provision-ops"
 alias k="kubectl"
 alias df="duf"
-alias tree="br"
+alias tree="tre"
 
 alias color_json=$'jq -R -r \'. as \$line \| try fromjson catch \$line\''
