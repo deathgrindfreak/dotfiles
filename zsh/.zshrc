@@ -69,3 +69,8 @@ done
 #[ -f "/Users/jcbell/.ghcup/env" ] && source "/Users/jcbell/.ghcup/env" # ghcup-env
 
 [ -f "/Users/b377114/.ghcup/env" ] && source "/Users/b377114/.ghcup/env" # ghcup-env
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/b377114/build/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/b377114/build/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/b377114/build/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/b377114/build/google-cloud-sdk/completion.zsh.inc'; fi

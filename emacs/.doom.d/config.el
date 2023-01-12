@@ -58,29 +58,29 @@
 (key-chord-mode t)
 (key-chord-define evil-insert-state-map  "jj" 'evil-normal-state)
 
-;; Github
+;; Gitlab
 
-(defun open-pr ()
-  "Open a new pull request in github for the current project"
+(defun open-mr ()
+  "Open a new merge request in gitlab for the current project"
   (interactive)
-  (let* ((project-dir (concat "/Users/jcbell/src/" (projectile-project-name)))
+  (let* ((project-dir (concat "/Users/b377114/src/" (projectile-project-name)))
          (branch-name (string-trim (let ((default-directory project-dir))
                                      (shell-command-to-string "git symbolic-ref --short HEAD")))))
-    (shell-command (concat "open https://github.com/VeracityInnovations/"
+    (shell-command (concat "open https://gitlab.com/heb-engineering/teams/enterprise/sco/spur/"
                            (projectile-project-name)
-                           "/pull/new/"
+                           "/-/merge_requests/new\\?merge_request%5Bsource_branch%5D\\="
                            branch-name))))
 
-(defun open-line-in-gh ()
-  "Open the line of the current buffer in github"
+(defun open-line-in-gl ()
+  "Open the line of the current buffer in gitlab"
   (interactive)
-  (let* ((project-dir (concat "/Users/jcbell/src/" (projectile-project-name)))
+  (let* ((project-dir (concat "/Users/b377114/src/" (projectile-project-name)))
          (branch-name (string-trim (let ((default-directory project-dir))
                                      (shell-command-to-string "git symbolic-ref --short HEAD"))))
          (file-name (substring (buffer-file-name) (length project-dir))))
-    (shell-command (concat "open https://github.com/VeracityInnovations/"
+    (shell-command (concat "open https://gitlab.com/heb-engineering/teams/enterprise/sco/spur/"
                            (projectile-project-name)
-                           "/blob/"
+                           "/-/blob/"
                            branch-name
                            file-name
                            "#L"
