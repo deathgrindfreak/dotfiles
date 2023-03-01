@@ -58,6 +58,10 @@
 (key-chord-mode t)
 (key-chord-define evil-insert-state-map  "jj" 'evil-normal-state)
 
+;; Add the GHCUP path to $PATH
+(add-to-list 'exec-path "/Users/b377114/.ghcup/bin")
+(setenv "PATH" (format "%s:%s" "/Users/b377114/.ghcup/bin" (getenv "PATH")))
+
 ;; Gitlab
 
 (defun open-mr ()
@@ -92,34 +96,6 @@
 (setq sqlformat-command 'pgformatter)
 (setq sqlformat-args '("-s2" "-g"))
 
-(defun set-pgpass (region)
-  "Sets the pgpass file up in good order for regional connections
-
-This function depends on the script `set_pgpass` which
-1) Downloads the .pgpass from the arx instance in the VIX_REGION region
-2) Updates the format so that it's appropriate for local development
-
-This has to happen since we don't have a unique host:port:database per-region for localhost
-vs AWS which has specific domains for each regional db"
-  (let ((old-region (getenv "VIX_REGION")))
-    (setenv "VIX_REGION" region)
-    (shell-command "set_pgpass")
-    (setenv "VIX_REGION" old-region)))
-
-(defun vix-psql (region)
-  (interactive "sVix Region: ")
-  "Connects to a Veracity db instance"
-
-  ;; Ensure that we're tunneled into the right arx instance
-  (let* ((ssh-sockfile (concat "$HOME/.vix/sockets/" region "-arx"))
-         (socat-cmd (concat "echo | socat - UNIX-CONNECT:" ssh-sockfile "")))
-    (when (not (string= "" (shell-command-to-string socat-cmd)))
-      (error (concat "No arx tunnel detected!  Try: arx " region))))
-
-  (message "Setting ~/.pgpass ...")
-  (set-pgpass region)
-  (sql-postgres))
-
 (defun my-sql-save-history-hook ()
   (let ((lval 'sql-input-ring-file-name)
         (rval 'sql-product))
@@ -134,6 +110,31 @@ vs AWS which has specific domains for each regional db"
                (symbol-name rval))))))
 
 (add-hook 'sql-interactive-mode-hook 'my-sql-save-history-hook)
+
+(setq sql-connection-alist
+      '((prod
+         (sql-product 'postgres)
+         (sql-port 5436)
+         (sql-server "localhost")
+         (sql-user "spurdbuser")
+         (sql-password (getenv "KPS_PSPUR_DB_PASS"))
+         (sql-database "my-app"))
+
+        (uat
+         (sql-product 'postgres)
+         (sql-port 5434)
+         (sql-server "localhost")
+         (sql-user "spurdbuser")
+         (sql-password (getenv "KPS_USPUR_DB_PASS"))
+         (sql-database "uspur-db"))
+
+        (dev
+         (sql-product 'postgres)
+         (sql-port 5432)
+         (sql-server "localhost")
+         (sql-user "spurdbuser")
+         (sql-password "pass")
+         (sql-database "spurdb"))))
 
 (global-evil-surround-mode 1)
 

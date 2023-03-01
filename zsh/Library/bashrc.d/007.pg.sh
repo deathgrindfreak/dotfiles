@@ -1,26 +1,52 @@
-ssh_hostname() (
-    SSH_HOSTNAME=''
+db_name() (
+    DB_NAME=''
 
-    case "$VIX_REGION" in
-    ue1)
-        SSH_HOSTNAME="arx.veracitydoc.com"
+    case "$1" in
+    prod)
+        DB_NAME="pspur-db"
         ;;
-    ue2)
-        SSH_HOSTNAME="arx.ue2.veracitydoc.com"
+    preprod)
+        DB_NAME="rspur-db"
         ;;
-    uw2)
-        SSH_HOSTNAME="arx.uw2.veracitydoc.com"
+    uat)
+        DB_NAME="uspur-db"
         ;;
-    cc1)
-        SSH_HOSTNAME="arx.cc1.veracitydoc.com"
-        ;;
-    ec1)
-        SSH_HOSTNAME="arx.ec1.veracitydoc.com"
+    cert)
+        DB_NAME="cspur-db"
         ;;
     esac
-    echo "$SSH_HOSTNAME"
+    echo "$DB_NAME"
 )
 
+db_port() (
+    PORT=''
+
+    case "$1" in
+    prod)
+        PORT="5436"
+        ;;
+    preprod)
+        PORT="5435"
+        ;;
+    uat)
+        PORT="5434"
+        ;;
+    cert)
+        PORT="5433"
+        ;;
+    esac
+    echo "$PORT"
+)
+
+spur_db() (
+    local env="$1"
+    psql -h localhost -p "$(db_port ${env})" -U spurdbuser "$(db_name ${env})"
+)
+
+spur_db_pgcli() (
+    local env="$1"
+    pgcli -h localhost -p "$(db_port ${env})" -U spurdbuser "$(db_name ${env})"
+)
 
 hung_queries() (
     ssh_host="$(ssh_hostname)"
