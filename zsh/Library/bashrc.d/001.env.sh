@@ -1,7 +1,9 @@
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 
+export PATH="$PATH:$HOME/build/stack/:$HOME/.local/bin:$HOME/Library/Haskell/bin:$HOME/.cabal/bin"
+
 # ConTeXt install path
-export PATH="$PATH:/Users/jcbell/context/tex/texmf-osx-64/bin"
+export PATH="$PATH:$HOME/context/tex/texmf-osx-64/bin"
 
 # Add terraform plan and apply
 export PATH="$PATH:$HOME/src/provision-ops/bin"
@@ -9,12 +11,14 @@ export PATH="$PATH:$HOME/src/provision-ops/bin"
 # brew Cellar
 export PATH="$PATH:/usr/local/Cellar/"
 
-export PATH="$PATH:/Users/jcbell/.emacs.d/bin"
+export PATH="$PATH:$HOME/.emacs.d/bin"
 
 export PATH="$PATH:/Applications/Emacs.app/"
 
 # J language
 export PATH="$PATH:/Applications/j903/bin/"
+
+export PATH="$PATH:${HOME}/Library/Python/3.9/bin"
 
 # z command
 . $HOME/bin/z/z.sh
@@ -43,11 +47,25 @@ export MANPATH="$MANPATH:$HOME/dotfiles/lisp/man"
 # AWS variables
 export AWS_PROFILE=personal
 export AWS_REGION=us-east-1
-export VIX_REGION=ue1
-export VIX_ENV=dev
 
 export PROMPT_COMMAND='if [ "$(id -u)" -ne 0 ]; then echo "$(date "+%Y-%m-%d.%H:%M:%S") $(pwd) $(history 1)" >> ~/.logs/bash-history-$(date "+%Y-%m-%d").log; fi'
 
-export BLACKDUCK_API='Y2JiYzFiZTQtMmRlMS00MGY3LTg3NjItZDBiYjNlOTdjNzA2OjNkNTgwZWJkLTgzMmQtNDU1YS05NTRhLTJkOGU3MWQzMDg0Ng=='
-
 export GTAGSLABEL=pygments
+
+export PGPASSFILE="$HOME/.pgpass"
+
+export SECRETS_DIR="$HOME/src/supplier-core/secrets"
+export SECRETS_SCRIPTS_DIR="${SECRETS_DIR}/script-config"
+
+export KPS_PROD_API_TOKEN="$(yq '.spurClientConfig.apiHubKey_enc' ${SECRETS_SCRIPTS_DIR}/kps-prod.dec.yml)"
+export KPS_PROD_INTEGRATION="$(yq '.spurClientConfig.spurIntegrationToken_enc' ${SECRETS_SCRIPTS_DIR}/kps-prod.dec.yml)"
+export KPS_PROD_PRIVATE="$(yq '.spurClientConfig.spurPrivateToken_enc' ${SECRETS_SCRIPTS_DIR}/kps-prod.dec.yml)"
+export KPS_PROD_PUBLIC="$(yq '.spurClientConfig.spurPublicToken_enc' ${SECRETS_SCRIPTS_DIR}/kps-prod.dec.yml)"
+
+export KPS_UAT_API_TOKEN="$(yq '.spurClientConfig.apiHubKey_enc' ${SECRETS_SCRIPTS_DIR}/kps-uat.dec.yml)"
+export KPS_UAT_INTEGRATION="$(yq '.spurClientConfig.spurIntegrationToken_enc' ${SECRETS_SCRIPTS_DIR}/kps-uat.dec.yml)"
+export KPS_UAT_PRIVATE="$(yq '.spurClientConfig.spurPrivateToken_enc' ${SECRETS_SCRIPTS_DIR}/kps-uat.dec.yml)"
+export KPS_UAT_PUBLIC="$(yq '.spurClientConfig.spurPublicToken_enc' ${SECRETS_SCRIPTS_DIR}/kps-uat.dec.yml)"
+
+export KPS_PSPUR_DB_PASS="$(yq '.env.KPS_PSPUR_DB_PASS_enc' ${SECRETS_DIR}/gcloud.dec.yaml)"
+export KPS_USPUR_DB_PASS="$(yq '.env.KPS_USPUR_DB_PASS_enc' ${SECRETS_DIR}/gcloud.dec.yaml)"
