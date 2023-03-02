@@ -41,16 +41,19 @@ parseEnv e =
     Right env -> pure env
     Left err -> die err
 
-optParser :: Parser Text
-optParser = argText "env" "The KPS environment (prod, preprod, uat or cert)"
+optParser :: Parser (Text, Bool)
+optParser = (,) <$> argText "env" "The KPS environment (prod, preprod, uat or cert)"
+                <*> switch "pgcli" 'p' "Use pgcli instead of psql"
 
 main :: IO ()
 main = do
-  env <- parseEnv =<< options "A psql wrapper for SPUR dbs" optParser
+  (envTxt, usePgCli) <- options "A psql wrapper for SPUR dbs" optParser
+  env <- parseEnv envTxt
   let psqlArgs =
         [ "-h", "localhost"
         , "-p", show (dbPort env)
         , "-U", "spurdbuser"
         , dbName env
         ]
-  sh . liftIO $ callProcess "psql" psqlArgs
+      program = if usePgCli then "pgcli" else "psql"
+  sh . liftIO $ callProcess program psqlArgs
