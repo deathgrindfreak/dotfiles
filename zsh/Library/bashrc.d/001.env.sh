@@ -1,3 +1,5 @@
+export PATH="$PATH:$HOME/Library/scripts/bin"
+
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 
 export PATH="$PATH:$HOME/build/stack/:$HOME/.local/bin:$HOME/Library/Haskell/bin:$HOME/.cabal/bin"

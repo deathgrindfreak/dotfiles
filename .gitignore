@@ -1,3 +1,6 @@
 lisp/bin/
 man/
 .DS_Store
+zsh/Library/scripts/bin
+zsh/Library/scripts/src/*.hi
+zsh/Library/scripts/src/*.o
