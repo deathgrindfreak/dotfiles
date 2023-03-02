@@ -1,12 +1,13 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-import Turtle
 import System.Process (callProcess)
+import Turtle
 
-data KPSEnv = Prod
-            | PreProd
-            | UAT
-            | Cert
+data KPSEnv
+  = Prod
+  | PreProd
+  | UAT
+  | Cert
 
 dbName :: KPSEnv -> String
 dbName env =
@@ -31,9 +32,11 @@ textToEnv envTxt =
     "preprod" -> Right PreProd
     "uat" -> Right UAT
     "cert" -> Right Cert
-    _ -> Left $ "Unknown environment: \""
-                  <> envTxt
-                  <> "\". Must be one of prod, preprod, uat or cert"
+    _ ->
+      Left $
+        "Unknown environment: \""
+          <> envTxt
+          <> "\". Must be one of prod, preprod, uat or cert"
 
 parseEnv :: Text -> IO KPSEnv
 parseEnv e =
@@ -42,17 +45,22 @@ parseEnv e =
     Left err -> die err
 
 optParser :: Parser (Text, Bool)
-optParser = (,) <$> argText "env" "The KPS environment (prod, preprod, uat or cert)"
-                <*> switch "pgcli" 'p' "Use pgcli instead of psql"
+optParser =
+  (,)
+    <$> argText "env" "The KPS environment (prod, preprod, uat or cert)"
+    <*> switch "pgcli" 'p' "Use pgcli instead of psql"
 
 main :: IO ()
 main = do
   (envTxt, usePgCli) <- options "A psql wrapper for SPUR dbs" optParser
   env <- parseEnv envTxt
   let psqlArgs =
-        [ "-h", "localhost"
-        , "-p", show (dbPort env)
-        , "-U", "spurdbuser"
+        [ "-h"
+        , "localhost"
+        , "-p"
+        , show (dbPort env)
+        , "-U"
+        , "spurdbuser"
         , dbName env
         ]
       program = if usePgCli then "pgcli" else "psql"

@@ -17,3 +17,7 @@ $(EXE_FILES): $(SOURCE_FILES)
 		--package turtle \
 		--package process \
 		-- -O2 -threaded -o $@ $<
+
+format:
+	find * -name '*.hs' | xargs -P0 fourmolu --no-cabal -i
+	hlint .
