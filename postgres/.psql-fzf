@@ -1,0 +1,4 @@
+\set prevpager `echo $PAGER`
+\setenv PAGER '~/.psql-fzf-pager'
+\s
+\setenv PAGER :prevpager

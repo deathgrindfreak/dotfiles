@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# Call fzf to pick one line from history
+fzf_out="$( fzf )"
+
+# If in tmux put the line from history into terminal, as if typed
+if [[ "${TMUX_PANE}" =~ ^%[0-9]+$ ]]
+then
+    # Escape trailing semicolon
+    fzf_out="$( sed 's/;$/\\;/' <<< "${fzf_out}" )"
+
+    tmux send-keys -t "${TMUX_PANE}" "${fzf_out}"
+else
+    # If not, just print it to screen
+    printf '%s\n' "${fzf_out}"
+fi
