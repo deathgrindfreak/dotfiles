@@ -11,7 +11,7 @@ clean:
 
 .PHONY: build clean
 
-$(EXE_FILES): $(SOURCE_FILES)
+$(EXE_FILES): bin/% : src/%.hs
 	@mkdir -p $(@D)
 	stack ghc --resolver lts-20.11 \
 		--package turtle \
