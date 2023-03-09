@@ -54,7 +54,16 @@ textToAccept = maybe (Right "application/json") toAccept
       case v of
         "json" -> Right "application/json"
         "text" -> Right "text/plain;charset=utf-8"
-        _ -> Left $ "Unknown HTTP verb: " <> v
+        _ -> Left $ "Unknown Accept header type: " <> v
+
+-- Pretty broad assumption, but we don't handle a ton of different mime types
+textToContentType :: Maybe Text -> Either Text (Maybe Text)
+textToContentType v =
+  case v of
+    Just "json" -> Right (Just "application/json")
+    Just "text" -> Right (Just "text/plain;charset=utf-8")
+    Just v -> Left $ "Unknown Content Type header: " <> v
+    Nothing -> Right Nothing
 
 parseOrDie :: b -> (b -> Either Text a) -> IO a
 parseOrDie e f =
@@ -62,14 +71,16 @@ parseOrDie e f =
     Right env -> pure env
     Left err -> die err
 
-optParser :: Parser (Text, Text, Text, Maybe Text, Maybe Text)
+optParser :: Parser (Text, Text, Text, Maybe Text, Maybe Text, Maybe Text, Maybe Text)
 optParser =
-  (,,,,)
+  (,,,,,,)
     <$> argText "route" "The relative API path"
     <*> optText "env" 'e' "The KPS environment (prod, preprod, uat or cert)"
     <*> optText "api" 'a' "The API type (public, private or integration)"
     <*> optional (optText "request" 'X' "Request type (http verb)")
     <*> optional (optText "accept" 't' "Accept type for the request (json or text)")
+    <*> optional (optText "content-type" 'c' "Content type for the request (json)")
+    <*> optional (optText "data" 'd' "Data to pass to curl during a POST")
 
 data APIOptions = APIOptions
   { env :: KPSEnv
@@ -77,21 +88,26 @@ data APIOptions = APIOptions
   , route :: Route
   , verb :: HTTPVerb
   , accept :: Text
+  , contentType :: Maybe Text
   , spurToken :: Text
   , apiKey :: Text
+  , dataBody :: Maybe Text
   }
   deriving (Show)
 
 parseOptions :: IO APIOptions
 parseOptions = do
-  (route, envTxt, apiTxt, verbTxt, acceptTxt) <- options "A wrapper for SPUR APIs" optParser
+  (route, envTxt, apiTxt, verbTxt, acceptTxt, contentTypeTxt, dataBody)
+    <- options "A wrapper for SPUR APIs" optParser
   env <- parseOrDie envTxt textToEnv
   api <- parseOrDie apiTxt textToApiType
   verb <- parseOrDie verbTxt textToVerb
   accept <- parseOrDie acceptTxt textToAccept
+  contentType <- parseOrDie contentTypeTxt textToContentType
+
   spurToken <- lookupOrDie (spurTokenName env api)
   apiKey <- lookupOrDie (apiKeyName env)
-  return $ APIOptions env api (Route route) verb accept spurToken apiKey
+  return $ APIOptions env api (Route route) verb accept contentType spurToken apiKey dataBody
   where
     lookupOrDie vName = do
       v <- need vName
@@ -123,7 +139,7 @@ parseOptions = do
        in "KPS_" <> eString <> "_API_TOKEN"
 
 constructURL :: APIOptions -> Text
-constructURL (APIOptions env api (Route route) _ _ _ _) =
+constructURL (APIOptions env api (Route route) _ _ _ _ _ _) =
   mconcat (L.intersperse "/" [url env, baseRoute env, apiRoute api]) <> route
   where
     url e =
@@ -149,7 +165,7 @@ constructURL (APIOptions env api (Route route) _ _ _ _) =
 main :: IO ()
 main = do
   opts <- parseOptions
-  let curlArgs =
+  let baseCurlArgs =
         [ "-X"
         , verbToText (verb opts)
         , constructURL opts
@@ -160,4 +176,15 @@ main = do
         , "-H"
         , "apikey: " <> apiKey opts
         ]
+
+      -- Assume we're posting JSON for now
+      addContentArgs =
+        case contentType opts of
+          Just c -> baseCurlArgs ++ ["-H", c]
+          Nothing -> baseCurlArgs
+
+      curlArgs =
+        case dataBody opts of
+          Just d -> addContentArgs ++ ["--data", d]
+          Nothing -> addContentArgs
   void $ proc "curl" curlArgs empty
