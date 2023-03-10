@@ -71,9 +71,9 @@ parseOrDie e f =
     Right env -> pure env
     Left err -> die err
 
-optParser :: Parser (Text, Text, Text, Maybe Text, Maybe Text, Maybe Text, Maybe Text)
+optParser :: Parser (Text, Text, Text, Maybe Text, Maybe Text, Maybe Text, Maybe Text, Bool)
 optParser =
-  (,,,,,,)
+  (,,,,,,,)
     <$> argText "route" "The relative API path"
     <*> optText "env" 'e' "The KPS environment (prod, preprod, uat or cert)"
     <*> optText "api" 'a' "The API type (public, private or integration)"
@@ -81,6 +81,7 @@ optParser =
     <*> optional (optText "accept" 't' "Accept type for the request (json or text)")
     <*> optional (optText "content-type" 'c' "Content type for the request (json)")
     <*> optional (optText "data" 'd' "Data to pass to curl during a POST")
+    <*> switch "verbose" 'v' "Verbose mode for curl"
 
 data APIOptions = APIOptions
   { env :: KPSEnv
@@ -92,13 +93,14 @@ data APIOptions = APIOptions
   , spurToken :: Text
   , apiKey :: Text
   , dataBody :: Maybe Text
+  , verbose :: Bool
   }
   deriving (Show)
 
 parseOptions :: IO APIOptions
 parseOptions = do
-  (route, envTxt, apiTxt, verbTxt, acceptTxt, contentTypeTxt, dataBody)
-    <- options "A wrapper for SPUR APIs" optParser
+  (route, envTxt, apiTxt, verbTxt, acceptTxt, contentTypeTxt, dataBody, verbose) <-
+    options "A wrapper for SPUR APIs" optParser
   env <- parseOrDie envTxt textToEnv
   api <- parseOrDie apiTxt textToApiType
   verb <- parseOrDie verbTxt textToVerb
@@ -107,7 +109,7 @@ parseOptions = do
 
   spurToken <- lookupOrDie (spurTokenName env api)
   apiKey <- lookupOrDie (apiKeyName env)
-  return $ APIOptions env api (Route route) verb accept contentType spurToken apiKey dataBody
+  return $ APIOptions env api (Route route) verb accept contentType spurToken apiKey dataBody verbose
   where
     lookupOrDie vName = do
       v <- need vName
@@ -139,7 +141,7 @@ parseOptions = do
        in "KPS_" <> eString <> "_API_TOKEN"
 
 constructURL :: APIOptions -> Text
-constructURL (APIOptions env api (Route route) _ _ _ _ _ _) =
+constructURL (APIOptions env api (Route route) _ _ _ _ _ _ _) =
   mconcat (L.intersperse "/" [url env, baseRoute env, apiRoute api]) <> route
   where
     url e =
@@ -165,26 +167,28 @@ constructURL (APIOptions env api (Route route) _ _ _ _ _ _) =
 main :: IO ()
 main = do
   opts <- parseOptions
-  let baseCurlArgs =
+  let curlArgs =
         [ "-X"
         , verbToText (verb opts)
         , constructURL opts
         , "-H"
-        , "accept: " <> accept opts
+        , "Accept: " <> accept opts
         , "-H"
         , "Spur-Authorization: token " <> spurToken opts
         , "-H"
         , "apikey: " <> apiKey opts
         ]
+          <> case contentType opts of
+            Just c -> ["-H", "Content-Type: " <> c]
+            Nothing -> []
+          <>
+          -- Assume we're posting JSON for now
+          case contentType opts of
+            Just c -> ["-H", "Content-Type: " <> c]
+            Nothing -> []
+          <> case dataBody opts of
+            Just d -> ["--data", d]
+            Nothing -> []
+          <> ["-v" | verbose opts]
 
-      -- Assume we're posting JSON for now
-      addContentArgs =
-        case contentType opts of
-          Just c -> baseCurlArgs ++ ["-H", c]
-          Nothing -> baseCurlArgs
-
-      curlArgs =
-        case dataBody opts of
-          Just d -> addContentArgs ++ ["--data", d]
-          Nothing -> addContentArgs
   void $ proc "curl" curlArgs empty
