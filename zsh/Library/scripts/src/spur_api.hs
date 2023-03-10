@@ -2,7 +2,7 @@
 
 import Control.Monad (void)
 import qualified Data.List as L
-import Turtle
+import Turtle hiding (env)
 
 data KPSEnv = Prod | PreProd | UAT | Cert deriving (Show)
 data APIType = Public | Private | Integration deriving (Show)
@@ -141,7 +141,7 @@ parseOptions = do
        in "KPS_" <> eString <> "_API_TOKEN"
 
 constructURL :: APIOptions -> Text
-constructURL (APIOptions env api (Route route) _ _ _ _ _ _ _) =
+constructURL APIOptions { env, api, route = Route route } =
   mconcat (L.intersperse "/" [url env, baseRoute env, apiRoute api]) <> route
   where
     url e =
@@ -189,6 +189,6 @@ main = do
           <> case dataBody opts of
             Just d -> ["--data", d]
             Nothing -> []
-          <> ["-v" | verbose opts]
+          <> ["-i" | verbose opts]
 
   void $ proc "curl" curlArgs empty
