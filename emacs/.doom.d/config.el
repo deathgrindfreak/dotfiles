@@ -58,6 +58,10 @@
 (key-chord-mode t)
 (key-chord-define evil-insert-state-map  "jj" 'evil-normal-state)
 
+;; Fix "error code 2" with ripgrep
+(after! counsel
+  (setq counsel-rg-base-command "rg -M 240 --with-filename --no-heading --line-number --color never %s || true"))
+
 ;; Add the GHCUP path to $PATH
 (add-to-list 'exec-path "/Users/b377114/.ghcup/bin")
 (setenv "PATH" (format "%s:%s" "/Users/b377114/.ghcup/bin" (getenv "PATH")))
