@@ -69,5 +69,10 @@ export KPS_UAT_INTEGRATION="$(yq '.spurClientConfig.spurIntegrationToken_enc' ${
 export KPS_UAT_PRIVATE="$(yq '.spurClientConfig.spurPrivateToken_enc' ${SECRETS_SCRIPTS_DIR}/kps-uat.dec.yml)"
 export KPS_UAT_PUBLIC="$(yq '.spurClientConfig.spurPublicToken_enc' ${SECRETS_SCRIPTS_DIR}/kps-uat.dec.yml)"
 
+export KPS_LOCAL_API_TOKEN="$(yq '.spurClientConfig.apiHubKey_enc' ${SECRETS_SCRIPTS_DIR}/local.dec.yml)"
+export KPS_LOCAL_INTEGRATION="$(yq '.spurClientConfig.spurIntegrationToken_enc' ${SECRETS_SCRIPTS_DIR}/local.dec.yml)"
+export KPS_LOCAL_PRIVATE="$(yq '.spurClientConfig.spurPrivateToken_enc' ${SECRETS_SCRIPTS_DIR}/local.dec.yml)"
+export KPS_LOCAL_PUBLIC="$(yq '.spurClientConfig.spurPublicToken_enc' ${SECRETS_SCRIPTS_DIR}/local.dec.yml)"
+
 export KPS_PSPUR_DB_PASS="$(yq '.env.KPS_PSPUR_DB_PASS_enc' ${SECRETS_DIR}/gcloud.dec.yaml)"
 export KPS_USPUR_DB_PASS="$(yq '.env.KPS_USPUR_DB_PASS_enc' ${SECRETS_DIR}/gcloud.dec.yaml)"

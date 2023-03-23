@@ -1,10 +1,11 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 import Control.Monad (void)
+import Data.Maybe (catMaybes)
 import qualified Data.List as L
 import Turtle hiding (env)
 
-data KPSEnv = Prod | PreProd | UAT | Cert deriving (Show)
+data KPSEnv = Prod | PreProd | UAT | Cert | Local deriving (Show)
 data APIType = Public | Private | Integration deriving (Show)
 newtype Route = Route {routeToText :: Text} deriving (Show)
 newtype HTTPVerb = HTTPVerb {verbToText :: Text} deriving (Show)
@@ -16,11 +17,12 @@ textToEnv envTxt =
     "preprod" -> Right PreProd
     "uat" -> Right UAT
     "cert" -> Right Cert
+    "local" -> Right Local
     _ ->
       Left $
         "Unknown environment: \""
           <> envTxt
-          <> "\". Must be one of prod, preprod, uat or cert"
+          <> "\". Must be one of prod, preprod, uat, cert or local"
 
 textToApiType :: Text -> Either Text APIType
 textToApiType apiTxt =
@@ -75,7 +77,7 @@ optParser :: Parser (Text, Text, Text, Maybe Text, Maybe Text, Maybe Text, Maybe
 optParser =
   (,,,,,,,)
     <$> argText "route" "The relative API path"
-    <*> optText "env" 'e' "The KPS environment (prod, preprod, uat or cert)"
+    <*> optText "env" 'e' "The KPS environment (prod, preprod, uat, cert or local)"
     <*> optText "api" 'a' "The API type (public, private or integration)"
     <*> optional (optText "request" 'X' "Request type (http verb)")
     <*> optional (optText "accept" 't' "Accept type for the request (json or text)")
@@ -124,6 +126,7 @@ parseOptions = do
               PreProd -> "PREPROD"
               UAT -> "UAT"
               Cert -> "CERT"
+              Local -> "LOCAL"
           aString =
             case a of
               Private -> "PRIVATE"
@@ -138,11 +141,13 @@ parseOptions = do
               PreProd -> "PREPROD"
               UAT -> "UAT"
               Cert -> "CERT"
+              Local -> "LOCAL"
        in "KPS_" <> eString <> "_API_TOKEN"
 
 constructURL :: APIOptions -> Text
 constructURL APIOptions { env, api, route = Route route } =
-  mconcat (L.intersperse "/" [url env, baseRoute env, apiRoute api]) <> route
+  mconcat (L.intersperse "/" $ catMaybes [Just (url env), baseRoute env, Just (apiRoute api)])
+    <> route
   where
     url e =
       case e of
@@ -150,17 +155,19 @@ constructURL APIOptions { env, api, route = Route route } =
         PreProd -> "https://coreapi.heb.com"
         UAT -> "https://coreapi.uat.heb.com"
         Cert -> "https://coreapi.uat.heb.com"
+        Local -> "http://localhost:8081"
 
     baseRoute e =
       case e of
-        Prod -> "spur"
-        PreProd -> "spur-shadow"
-        UAT -> "spur-uat"
-        Cert -> "spur-cert"
+        Prod -> Just "spur"
+        PreProd -> Just "spur-shadow"
+        UAT -> Just "spur-uat"
+        Cert -> Just "spur-cert"
+        Local -> Nothing
 
     apiRoute a =
       case a of
-        Public -> "public"
+        Public -> "api/v1"
         Private -> "private"
         Integration -> "integration"
 
