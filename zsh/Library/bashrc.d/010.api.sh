@@ -21,3 +21,21 @@ supplier_raw_events_prod() {
 supplier_event_body_prod() {
    api_text_prod "/spur/private/events/$1/body"
 }
+
+diff_xml() {
+   spur_api "/peoplesoft-next-gen-trace/$1/next-gen-xml" \
+       --api private \
+       --env prod \
+       --accept xml \
+       | xmllint --format - \
+       > "/tmp/next-gen-$1.xml"
+
+   spur_api "/peoplesoft-next-gen-trace/$1/legacy-xml" \
+       --api private \
+       --env prod \
+       --accept xml \
+       | xmllint --format - \
+       > "/tmp/legacy-$1.xml"
+
+   colordiff -u "/tmp/legacy-$1.xml" "/tmp/next-gen-$1.xml"
+}

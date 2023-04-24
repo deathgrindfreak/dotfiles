@@ -10,6 +10,7 @@ data KPSEnv
   | Cert
   | LocalDev
   | Dev
+  | FunctionalTest
 
 dbName :: KPSEnv -> String
 dbName env =
@@ -20,6 +21,7 @@ dbName env =
     Cert -> "cspur-db"
     LocalDev -> "spurdb"
     Dev -> "dspur-db-v13"
+    FunctionalTest -> "spurdb"
 
 dbPort :: KPSEnv -> Int
 dbPort env =
@@ -30,6 +32,7 @@ dbPort env =
     Cert -> 5433
     LocalDev -> 54329
     Dev -> 5432
+    FunctionalTest -> 54320
 
 textToEnv :: Text -> Either Text KPSEnv
 textToEnv envTxt =
@@ -40,11 +43,12 @@ textToEnv envTxt =
     "cert" -> Right Cert
     "localdev" -> Right LocalDev
     "dev" -> Right Dev
+    "functional_test" -> Right FunctionalTest
     _ ->
       Left $
         "Unknown environment: \""
           <> envTxt
-          <> "\". Must be one of prod, preprod, uat, cert, dev or localdev"
+          <> "\". Must be one of prod, preprod, uat, cert, dev, localdev or functional_test"
 
 parseEnv :: Text -> IO KPSEnv
 parseEnv e =
@@ -55,7 +59,7 @@ parseEnv e =
 optParser :: Parser (Text, Bool)
 optParser =
   (,)
-    <$> argText "env" "The KPS environment (prod, preprod, uat, cert, dev or localdev)"
+    <$> argText "env" "The KPS environment (prod, preprod, uat, cert, dev, localdev or functional_test)"
     <*> switch "pgcli" 'p' "Use pgcli instead of psql"
 
 main :: IO ()

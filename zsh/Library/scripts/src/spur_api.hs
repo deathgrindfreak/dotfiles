@@ -55,6 +55,7 @@ textToAccept = maybe (Right "application/json") toAccept
     toAccept v =
       case v of
         "json" -> Right "application/json"
+        "xml" -> Right "application/xml"
         "text" -> Right "text/plain;charset=utf-8"
         _ -> Left $ "Unknown Accept header type: " <> v
 
@@ -63,6 +64,7 @@ textToContentType :: Maybe Text -> Either Text (Maybe Text)
 textToContentType v =
   case v of
     Just "json" -> Right (Just "application/json")
+    Just "xml" -> Right (Just "application/xml")
     Just "text" -> Right (Just "text/plain;charset=utf-8")
     Just v -> Left $ "Unknown Content Type header: " <> v
     Nothing -> Right Nothing
@@ -80,7 +82,7 @@ optParser =
     <*> optText "env" 'e' "The KPS environment (prod, preprod, uat, cert or local)"
     <*> optText "api" 'a' "The API type (public, private or integration)"
     <*> optional (optText "request" 'X' "Request type (http verb)")
-    <*> optional (optText "accept" 't' "Accept type for the request (json or text)")
+    <*> optional (optText "accept" 't' "Accept type for the request (json, xml or text)")
     <*> optional (optText "content-type" 'c' "Content type for the request (json)")
     <*> optional (optText "data" 'd' "Data to pass to curl during a POST")
     <*> switch "verbose" 'v' "Verbose mode for curl"
