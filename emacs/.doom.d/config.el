@@ -68,6 +68,13 @@
 
 ;; Gitlab
 
+;;; Add some additional push options for GitLab
+(transient-append-suffix 'magit-push "-u"
+  '(1 "=s" "Skip GitLab pipeline" "--push-option=ci.skip"))
+
+(transient-append-suffix 'magit-push "-u"
+  '(1 "=m" "Create GitLab merge request" "--push-option=merge_request.create"))
+
 (defun open-mr ()
   "Open a new merge request in gitlab for the current project"
   (interactive)

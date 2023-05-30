@@ -186,10 +186,8 @@ main = do
         , "Spur-Authorization: token " <> spurToken opts
         , "-H"
         , "apikey: " <> apiKey opts
+        , "-H", "application: swagger-ui"
         ]
-          <> case contentType opts of
-            Just c -> ["-H", "Content-Type: " <> c]
-            Nothing -> []
           <>
           -- Assume we're posting JSON for now
           case contentType opts of
@@ -199,5 +197,8 @@ main = do
             Just d -> ["--data", d]
             Nothing -> []
           <> ["-i" | verbose opts]
+          -- <> case application opts of
+          --      Just a -> ["-H", "Application: " <> a]
+          --      Nothing -> []
 
   void $ proc "curl" curlArgs empty

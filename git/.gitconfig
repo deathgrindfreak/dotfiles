@@ -1,8 +1,13 @@
 [user]
 	email = bell.cooper@heb.com
 	name = Cooper Bell
+	signingkey = /Users/b377114/.ssh/ed25519.pub
 [diff]
 	tool = delta
+[difftool "jsondiff"]
+	cmd = "$HOME/bin/json-diff $LOCAL $REMOTE"
+[alias]
+	jdiff = difftool -t jsondiff -y
 [merge]
 	tool = delta
 [push]
@@ -23,3 +28,7 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+[gpg]
+	format = ssh
+[commit]
+	gpgsign = true

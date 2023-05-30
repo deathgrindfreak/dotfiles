@@ -23,19 +23,19 @@ supplier_event_body_prod() {
 }
 
 diff_xml() {
-   spur_api "/peoplesoft-next-gen-trace/$1/next-gen-xml" \
+   spur_api "/peoplesoft-next-gen-trace/$2/next-gen-xml" \
        --api private \
-       --env prod \
+       --env "$1" \
        --accept xml \
        | xmllint --format - \
-       > "/tmp/next-gen-$1.xml"
+       > "/tmp/next-gen-$2.xml"
 
-   spur_api "/peoplesoft-next-gen-trace/$1/legacy-xml" \
+   spur_api "/peoplesoft-next-gen-trace/$2/legacy-xml" \
        --api private \
-       --env prod \
+       --env "$1" \
        --accept xml \
        | xmllint --format - \
-       > "/tmp/legacy-$1.xml"
+       > "/tmp/legacy-$2.xml"
 
-   colordiff -u "/tmp/legacy-$1.xml" "/tmp/next-gen-$1.xml"
+   colordiff -u "/tmp/legacy-$2.xml" "/tmp/next-gen-$2.xml"
 }

@@ -2,6 +2,7 @@
 
 import System.Process (callProcess)
 import Turtle
+import qualified Data.Text as T
 
 data KPSEnv
   = Prod
@@ -56,15 +57,16 @@ parseEnv e =
     Right env -> pure env
     Left err -> die err
 
-optParser :: Parser (Text, Bool)
+optParser :: Parser (Text, Bool, Maybe Text)
 optParser =
-  (,)
+  (,,)
     <$> argText "env" "The KPS environment (prod, preprod, uat, cert, dev, localdev or functional_test)"
     <*> switch "pgcli" 'p' "Use pgcli instead of psql"
+    <*> optional (optText "command" 'c' "Run a SQL command")
 
 main :: IO ()
 main = do
-  (envTxt, usePgCli) <- options "A psql wrapper for SPUR dbs" optParser
+  (envTxt, usePgCli, mbCommand) <- options "A psql wrapper for SPUR dbs" optParser
   env <- parseEnv envTxt
   let psqlArgs =
         [ "-h"
@@ -73,7 +75,9 @@ main = do
         , show (dbPort env)
         , "-U"
         , "spurdbuser"
-        , dbName env
-        ]
+        ] <> case mbCommand of
+               Nothing -> []
+               Just command -> ["-c", T.unpack command]
+          <> [dbName env]
       program = if usePgCli then "pgcli" else "psql"
   sh . liftIO $ callProcess program psqlArgs
