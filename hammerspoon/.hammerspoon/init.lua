@@ -8,12 +8,19 @@ hs.hotkey.bind({"alt"}, "space", function()
     end
 end)
 
+-- Show emacs
 hs.hotkey.bind({"ctrl", "alt"}, "space", function()
     emacs = hs.application.get("Emacs")
-    if emacs:isFrontmost() then
-      emacs:hide()
-    else
+    if not emacs:isFrontmost() then
       emacs:activate()
+    end
+end)
+
+-- Show firefox
+hs.hotkey.bind({"ctrl", "cmd"}, "space", function()
+    firefox = hs.application.get("Firefox Developer Edition")
+    if not firefox:isFrontmost() then
+      firefox:activate()
     end
 end)
 
