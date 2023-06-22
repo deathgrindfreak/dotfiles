@@ -11,6 +11,7 @@ data KPSEnv
   | Cert
   | LocalDev
   | Dev
+  deriving Eq
 
 dbName :: KPSEnv -> String
 dbName env =
@@ -19,7 +20,7 @@ dbName env =
     PreProd -> "rspur-rsf-db"
     UAT -> "uspur-rsf-db"
     Cert -> "cspur-rsf-db"
-    LocalDev -> "rsf-db"
+    LocalDev -> "rsfdb"
     Dev -> "dspur-rsf-db"
 
 dbPort :: KPSEnv -> Int
@@ -29,7 +30,7 @@ dbPort env =
     PreProd -> 5435
     UAT -> 5434
     Cert -> 5433
-    LocalDev -> 54329
+    LocalDev -> 55329
     Dev -> 5432
 
 textToEnv :: Text -> Either Text KPSEnv
@@ -70,7 +71,7 @@ main = do
         , "-p"
         , show (dbPort env)
         , "-U"
-        , "sqlproxy"
+        , if env == LocalDev then "rsfdbuser" else "sqlproxy"
         ] <> case mbCommand of
                Nothing -> []
                Just command -> ["-c", T.unpack command]
