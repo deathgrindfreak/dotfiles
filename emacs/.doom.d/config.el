@@ -53,6 +53,8 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
+(setq enable-local-variables :all)
+
 ;; Set "jj" as the exit chord
 (require 'key-chord)
 (key-chord-mode t)
@@ -74,6 +76,12 @@
 
 (transient-append-suffix 'magit-push "-u"
   '(1 "=m" "Create GitLab merge request" "--push-option=merge_request.create"))
+
+(defun open-file-directory-in-finder ()
+  "Opens the current file directory in finder"
+  (interactive)
+  (let ((dir (file-name-directory buffer-file-name)))
+    (shell-command (concat "open " dir))))
 
 (defun open-mr ()
   "Open a new merge request in gitlab for the current project"
@@ -101,6 +109,13 @@
                            "#L"
                            (number-to-string
                             (line-number-at-pos))))))
+
+(defun align-comments (beginning end)
+  "Align comments within marked region."
+  (interactive "*r")
+  (align-regexp beginning end (concat "\\(\\s-*\\)"
+                                      (regexp-quote comment-start))))
+
 
 ;; PG
 
@@ -151,3 +166,31 @@
 
 ;; Enable tide/typescript-mode for tsx files
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
+
+;; tree-sitter
+(setq treesit-language-source-alist
+   '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+     (cmake "https://github.com/uyha/tree-sitter-cmake")
+     (css "https://github.com/tree-sitter/tree-sitter-css")
+     (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
+     (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+     (go "https://github.com/tree-sitter/tree-sitter-go")
+     (html "https://github.com/tree-sitter/tree-sitter-html")
+     (haskell "https://github.com/tree-sitter/tree-sitter-haskell")
+     (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+     (json "https://github.com/tree-sitter/tree-sitter-json")
+     (make "https://github.com/alemuller/tree-sitter-make")
+     (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+     (python "https://github.com/tree-sitter/tree-sitter-python")
+     (toml "https://github.com/tree-sitter/tree-sitter-toml")
+     (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+     (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+     (sql "https://github.com/m-novikov/tree-sitter-sql")
+     (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+
+(setq major-mode-remap-alist
+      '((dockerfile-mode . dockerfile-ts-mode)
+        ;; (sql-mode . sql-ts-mode)
+        (json-mode . json-ts-mode)
+        (bash-mode . bash-ts-mode)
+        (yaml-mode . yaml-ts-mode)))

@@ -57,16 +57,17 @@ parseEnv e =
     Right env -> pure env
     Left err -> die err
 
-optParser :: Parser (Text, Bool, Maybe Text)
+optParser :: Parser (Text, Bool, [Text], [Text])
 optParser =
-  (,,)
+  (,,,)
     <$> argText "env" "The KPS environment (prod, preprod, uat, cert, dev, localdev or functional_test)"
     <*> switch "pgcli" 'p' "Use pgcli instead of psql"
-    <*> optional (optText "command" 'c' "Run a SQL command")
+    <*> many (optText "command" 'c' "Run a SQL command")
+    <*> many (optText "file" 'f' "Run a SQL file")
 
 main :: IO ()
 main = do
-  (envTxt, usePgCli, mbCommand) <- options "A psql wrapper for SPUR dbs" optParser
+  (envTxt, usePgCli, commands, files) <- options "A psql wrapper for SPUR dbs" optParser
   env <- parseEnv envTxt
   let psqlArgs =
         [ "-h"
@@ -75,9 +76,8 @@ main = do
         , show (dbPort env)
         , "-U"
         , "spurdbuser"
-        ] <> case mbCommand of
-               Nothing -> []
-               Just command -> ["-c", T.unpack command]
+        ] <> concatMap (\command -> ["-c", T.unpack command]) commands
+          <> concatMap (\file -> ["-f", T.unpack file]) files
           <> [dbName env]
       program = if usePgCli then "pgcli" else "psql"
   sh . liftIO $ callProcess program psqlArgs
