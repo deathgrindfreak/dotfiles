@@ -5,7 +5,7 @@ import Data.Maybe (catMaybes)
 import qualified Data.List as L
 import Turtle hiding (env)
 
-data KPSEnv = Prod | PreProd | UAT | Cert | Local | FunctionalTest deriving (Show)
+data KPSEnv = Prod | PreProd | UAT | Cert | Dev | Local | FunctionalTest deriving (Show)
 data APIType = Public | Private | Integration deriving (Show)
 newtype Route = Route {routeToText :: Text} deriving (Show)
 newtype HTTPVerb = HTTPVerb {verbToText :: Text} deriving (Show)
@@ -17,13 +17,14 @@ textToEnv envTxt =
     "preprod" -> Right PreProd
     "uat" -> Right UAT
     "cert" -> Right Cert
+    "dev" -> Right Dev
     "local" -> Right Local
     "functional_test" -> Right FunctionalTest
     _ ->
       Left $
         "Unknown environment: \""
           <> envTxt
-          <> "\". Must be one of prod, preprod, uat, cert, local or functional_test"
+          <> "\". Must be one of prod, preprod, uat, cert, dev, local or functional_test"
 
 textToApiType :: Text -> Either Text APIType
 textToApiType apiTxt =
@@ -80,7 +81,7 @@ optParser :: Parser (Text, Text, Text, Maybe Text, Maybe Text, Maybe Text, Maybe
 optParser =
   (,,,,,,,)
     <$> argText "route" "The relative API path"
-    <*> optText "env" 'e' "The KPS environment (prod, preprod, uat, cert, local or functional_test)"
+    <*> optText "env" 'e' "The KPS environment (prod, preprod, uat, cert, dev, local or functional_test)"
     <*> optText "api" 'a' "The API type (public, private or integration)"
     <*> optional (optText "request" 'X' "Request type (http verb)")
     <*> optional (optText "accept" 't' "Accept type for the request (json, xml or text)")
@@ -129,6 +130,7 @@ parseOptions = do
               PreProd -> "PREPROD"
               UAT -> "UAT"
               Cert -> "CERT"
+              Dev -> "DEV"
               Local -> "LOCAL"
               FunctionalTest -> "LOCAL"
           aString =
@@ -145,6 +147,7 @@ parseOptions = do
               PreProd -> "PREPROD"
               UAT -> "UAT"
               Cert -> "CERT"
+              Dev -> "DEV"
               Local -> "LOCAL"
               FunctionalTest -> "LOCAL"
        in "KPS_" <> eString <> "_API_TOKEN"
@@ -159,6 +162,7 @@ constructURL APIOptions { env, api, route = Route route } =
         PreProd -> "https://coreapi.heb.com"
         UAT -> "https://coreapi.uat.heb.com"
         Cert -> "https://coreapi.uat.heb.com"
+        Dev -> "https://coreapi.uat.heb.com"
         Local -> "http://localhost:8081"
         FunctionalTest -> "http://localhost:8088"
 
@@ -168,6 +172,7 @@ constructURL APIOptions { env, api, route = Route route } =
         PreProd -> Just "spur-shadow"
         UAT -> Just "spur-uat"
         Cert -> Just "spur-cert"
+        Dev -> Just "spur-dev"
         Local -> Nothing
         FunctionalTest -> Nothing
 

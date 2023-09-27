@@ -79,6 +79,11 @@ export KPS_CERT_INTEGRATION="$(yq '.spurClientConfig.spurIntegrationToken_enc' $
 export KPS_CERT_PRIVATE="$(yq '.spurClientConfig.spurPrivateToken_enc' ${SECRETS_SCRIPTS_DIR}/kps-cert.dec.yml)"
 export KPS_CERT_PUBLIC="$(yq '.spurClientConfig.spurPublicToken_enc' ${SECRETS_SCRIPTS_DIR}/kps-cert.dec.yml)"
 
+export KPS_DEV_API_TOKEN="$(yq '.spurClientConfig.apiHubKey_enc' ${SECRETS_SCRIPTS_DIR}/kps-dev.dec.yml)"
+export KPS_DEV_INTEGRATION="$(yq '.spurClientConfig.spurIntegrationToken_enc' ${SECRETS_SCRIPTS_DIR}/kps-dev.dec.yml)"
+export KPS_DEV_PRIVATE="$(yq '.spurClientConfig.spurPrivateToken_enc' ${SECRETS_SCRIPTS_DIR}/kps-dev.dec.yml)"
+export KPS_DEV_PUBLIC="$(yq '.spurClientConfig.spurPublicToken_enc' ${SECRETS_SCRIPTS_DIR}/kps-dev.dec.yml)"
+
 export KPS_LOCAL_API_TOKEN="$(yq '.spurClientConfig.apiHubKey_enc' ${SECRETS_SCRIPTS_DIR}/local.dec.yml)"
 export KPS_LOCAL_INTEGRATION="$(yq '.spurClientConfig.spurIntegrationToken_enc' ${SECRETS_SCRIPTS_DIR}/local.dec.yml)"
 export KPS_LOCAL_PRIVATE="$(yq '.spurClientConfig.spurPrivateToken_enc' ${SECRETS_SCRIPTS_DIR}/local.dec.yml)"
