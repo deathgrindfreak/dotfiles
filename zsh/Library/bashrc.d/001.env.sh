@@ -31,6 +31,11 @@ export BROWSER=firefox
 # default editor
 export EDITOR='emacsclient -c -nw'
 
+# history settings
+export HISTCONTROL=ignoredups
+export HISTSIZE=500000
+export HISTFILESIZE="$HISTSIZE"
+
 # pkg-config path
 export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/local/lib/pkgconfig:/usr/lib/i386-linux-gnu/pkgconfig/:/usr/include/
 
@@ -45,10 +50,6 @@ export PKG_CONFIG_PATH="/usr/local/opt/libffi/lib/pkgconfig"
 # lisp programs
 export PATH="$PATH:$HOME/dotfiles/lisp/bin"
 export MANPATH="$MANPATH:$HOME/dotfiles/lisp/man"
-
-# AWS variables
-export AWS_PROFILE=personal
-export AWS_REGION=us-east-1
 
 export PROMPT_COMMAND='if [ "$(id -u)" -ne 0 ]; then echo "$(date "+%Y-%m-%d.%H:%M:%S") $(pwd) $(history 1)" >> ~/.logs/bash-history-$(date "+%Y-%m-%d").log; fi'
 

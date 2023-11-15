@@ -21,6 +21,33 @@
 ;; font string. You generally only need these two:
 ;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
+;;
+(setq doom-font-increment 1)
+(setq me/doom-font-size 12)
+(setq me/doom-variable-font-size 13)
+(setq doom-font (font-spec :family "Fira Code" :size me/doom-font-size)) ;; JetBrains Mono,  :weight 'medium, :size 12
+(setq doom-symbol-font (font-spec :family "JetBrainsMono Nerd Font" :size me/doom-font-size))
+(setq doom-variable-pitch-font (font-spec :family "Fira Sans" :size me/doom-variable-font-size))
+
+(custom-set-faces
+ '(line-number ((t (:foreground "#6f7787" :weight normal :slant normal))))
+ '(line-number-current-line ((t (:foreground "#aebacf" :weight normal :slant normal))))
+ '(consult-separator ((t (:foreground "#aebacf" :weight normal :slant normal))))
+ '(consult-grep-context ((t (:foreground "#aebacf" :weight normal :slant normal))))
+
+ '(org-block ((t (:inherit fixed-pitch))))
+ '(org-code ((t (:inherit (shadow fixed-pitch)))))
+ '(org-document-info ((t (:foreground "dark orange"))))
+ '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+ '(org-indent ((t (:inherit (org-hide fixed-pitch)))))
+ ;;'(org-link ((t (:foreground "royal blue" :underline t))))
+ '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+ '(org-property-value ((t (:inherit fixed-pitch))) t)
+ '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+ '(org-table ((t (:inherit fixed-pitch :foreground "#83a598"))))
+ '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold))))
+
+ '(org-verbatim ((t (:inherit (shadow fixed-pitch))))))
 
 ;; There Are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -34,7 +61,6 @@
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type t)
-
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
@@ -163,6 +189,15 @@
          (sql-database "spurdb"))))
 
 (global-evil-surround-mode 1)
+
+(load-file (let ((coding-system-for-read 'utf-8))
+                (shell-command-to-string "agda-mode locate")))
+
+(setq auto-mode-alist
+   (append
+     '(("\\.agda\\'" . agda2-mode)
+       ("\\.lagda.md\\'" . agda2-mode))
+     auto-mode-alist))
 
 ;; Enable tide/typescript-mode for tsx files
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))

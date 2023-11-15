@@ -1,22 +1,8 @@
-(defun my/apply-theme (appearance)
-  "Load theme, taking current system APPEARANCE into consideration."
-  (mapc #'disable-theme custom-enabled-themes)
-  (pcase appearance
-    ('light (load-theme 'doom-gruvbox-light t))
-    ('dark (load-theme 'doom-gruvbox t))))
-
-(setq doom-font (font-spec :family "Hack" :size 12))
-
-(add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
 
 (setq lsp-enable-file-watchers nil)
 
 ;; Projectile won't show all files if this is set to t
 (setq projectile-enable-caching nil)
-
-(require 'key-chord)
-(key-chord-mode t)
-(key-chord-define evil-insert-state-map  "jj" 'evil-normal-state)
 
 ;;; Use typescript-mode with tsx files
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
